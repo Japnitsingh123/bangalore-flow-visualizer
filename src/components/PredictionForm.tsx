@@ -4,21 +4,34 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Calendar, Sparkles } from "lucide-react";
+import { MapPin, Calendar, Sparkles, Clock, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 
 const PredictionForm = () => {
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
-  const [time, setTime] = useState("");
+  const [date, setDate] = useState("");
+  const [areaName, setAreaName] = useState("");
+  const [roadName, setRoadName] = useState("");
+  const [weatherConditions, setWeatherConditions] = useState("");
+  const [prediction, setPrediction] = useState<{
+    trafficVolume: number;
+    travelTimeIndex: number;
+  } | null>(null);
 
   const handlePredict = () => {
-    if (!from || !to || !time) {
+    if (!date || !areaName || !roadName || !weatherConditions) {
       toast.error("Please fill in all fields");
       return;
     }
-    toast.success("Generating prediction...", {
-      description: "This will be connected to your ML model"
+    
+    // Mock prediction - replace with your ML model API call
+    const mockPrediction = {
+      trafficVolume: Math.floor(Math.random() * 500) + 200,
+      travelTimeIndex: +(Math.random() * 2 + 0.5).toFixed(2)
+    };
+    
+    setPrediction(mockPrediction);
+    toast.success("Prediction generated!", {
+      description: "Connect your ML model to get real predictions"
     });
   };
 
@@ -26,37 +39,40 @@ const PredictionForm = () => {
     <section id="prediction-section" className="py-20 px-4">
       <div className="container mx-auto max-w-4xl">
         <div className="text-center mb-12 animate-slide-up">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">Get Your Route Prediction</h2>
-          <p className="text-lg text-muted-foreground">Enter your journey details for AI-powered traffic insights</p>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">Get Your Traffic Prediction</h2>
+          <p className="text-lg text-muted-foreground">Enter road details for ML-powered traffic insights</p>
         </div>
 
         <Card className="shadow-card border-2 hover:shadow-glow transition-all duration-300">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MapPin className="w-5 h-5 text-primary" />
-              Route Details
+              Traffic Input Details
             </CardTitle>
-            <CardDescription>We'll analyze traffic patterns to give you the best prediction</CardDescription>
+            <CardDescription>Enter location and conditions for ML traffic prediction</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="from">From Location</Label>
+                <Label htmlFor="date" className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  Date
+                </Label>
                 <Input 
-                  id="from" 
-                  placeholder="e.g., Koramangala" 
-                  value={from}
-                  onChange={(e) => setFrom(e.target.value)}
+                  id="date" 
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
                   className="border-2 focus:border-primary"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="to">To Location</Label>
+                <Label htmlFor="areaName">Area Name</Label>
                 <Input 
-                  id="to" 
-                  placeholder="e.g., Whitefield" 
-                  value={to}
-                  onChange={(e) => setTo(e.target.value)}
+                  id="areaName" 
+                  placeholder="e.g., Koramangala" 
+                  value={areaName}
+                  onChange={(e) => setAreaName(e.target.value)}
                   className="border-2 focus:border-primary"
                 />
               </div>
@@ -64,36 +80,26 @@ const PredictionForm = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="time" className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  Time of Travel
-                </Label>
-                <Select value={time} onValueChange={setTime}>
-                  <SelectTrigger className="border-2">
-                    <SelectValue placeholder="Select time" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="morning">Morning (6-10 AM)</SelectItem>
-                    <SelectItem value="afternoon">Afternoon (12-2 PM)</SelectItem>
-                    <SelectItem value="evening">Evening (5-9 PM)</SelectItem>
-                    <SelectItem value="night">Night (9 PM-6 AM)</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="roadName">Road Name</Label>
+                <Input 
+                  id="roadName" 
+                  placeholder="e.g., Outer Ring Road" 
+                  value={roadName}
+                  onChange={(e) => setRoadName(e.target.value)}
+                  className="border-2 focus:border-primary"
+                />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="day">Day of Week</Label>
-                <Select>
+                <Label htmlFor="weather">Weather Conditions</Label>
+                <Select value={weatherConditions} onValueChange={setWeatherConditions}>
                   <SelectTrigger className="border-2">
-                    <SelectValue placeholder="Select day" />
+                    <SelectValue placeholder="Select weather" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="monday">Monday</SelectItem>
-                    <SelectItem value="tuesday">Tuesday</SelectItem>
-                    <SelectItem value="wednesday">Wednesday</SelectItem>
-                    <SelectItem value="thursday">Thursday</SelectItem>
-                    <SelectItem value="friday">Friday</SelectItem>
-                    <SelectItem value="saturday">Saturday</SelectItem>
-                    <SelectItem value="sunday">Sunday</SelectItem>
+                    <SelectItem value="clear">Clear</SelectItem>
+                    <SelectItem value="cloudy">Cloudy</SelectItem>
+                    <SelectItem value="rainy">Rainy</SelectItem>
+                    <SelectItem value="foggy">Foggy</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -109,6 +115,38 @@ const PredictionForm = () => {
             </Button>
           </CardContent>
         </Card>
+
+        {prediction && (
+          <Card className="mt-8 shadow-card border-2 animate-slide-up bg-gradient-to-br from-primary/5 to-accent/5">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-primary" />
+                Prediction Results
+              </CardTitle>
+              <CardDescription>ML-generated traffic predictions for your inputs</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-6 rounded-lg bg-card border-2 border-primary/20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <MapPin className="w-5 h-5 text-primary" />
+                    <Label className="text-sm text-muted-foreground">Traffic Volume</Label>
+                  </div>
+                  <p className="text-4xl font-bold text-primary">{prediction.trafficVolume}</p>
+                  <p className="text-sm text-muted-foreground mt-1">vehicles/hour</p>
+                </div>
+                <div className="p-6 rounded-lg bg-card border-2 border-accent/20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Clock className="w-5 h-5 text-accent" />
+                    <Label className="text-sm text-muted-foreground">Travel Time Index</Label>
+                  </div>
+                  <p className="text-4xl font-bold text-accent">{prediction.travelTimeIndex}</p>
+                  <p className="text-sm text-muted-foreground mt-1">relative to free flow</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </section>
   );
